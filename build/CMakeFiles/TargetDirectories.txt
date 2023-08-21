@@ -1,0 +1,3 @@
+/home/aibure/CppProjects/Sisyphus_compare/build/CMakeFiles/visualization.dir
+/home/aibure/CppProjects/Sisyphus_compare/build/CMakeFiles/edit_cache.dir
+/home/aibure/CppProjects/Sisyphus_compare/build/CMakeFiles/rebuild_cache.dir
