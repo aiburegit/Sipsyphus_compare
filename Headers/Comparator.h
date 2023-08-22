@@ -18,6 +18,7 @@ private:
     vector<Package> second_enty;
     map<string,vector<Package>> unic_first;
     map<string,vector<Package>> unic_second;
+    map<string,vector<Package>> unic_diff;
     vector<Package> version_diff;
     int total_first_unic = 0, total_second_unic = 0, total_ver_diff = 0;
     map<string, vector<Package>> sortByArchVersions(vector<Package> pack)
@@ -59,6 +60,7 @@ public:
         total_first_unic = 0;
         total_second_unic = 0;
         total_ver_diff = 0;
+        int total_count = 0;
 
         auto sort_first_enty = sortByArchVersions(first_enty);
         auto sort_second_enty = sortByArchVersions(second_enty);
@@ -86,8 +88,10 @@ public:
                         {
                             if(versionCompare((*iter),s_item)){
                                 version_diff.push_back((*iter));
+                                unic_diff[f_enty.first].push_back((*iter));
                                 total_ver_diff++;
                             }
+                            total_count++;
                         }
                     }
                     unordered_set<Package, PackageHash> s_pac_set;
@@ -107,21 +111,30 @@ public:
                         {
                             if(versionCompare(f_item,(*iter))){
                                 version_diff.push_back(f_item);
+                                unic_diff[f_enty.first].push_back(f_item);
                                 total_ver_diff++;
                             }
+                            total_count++;
                         }
                     }
                 }
             }
         }
+        cout << total_first_unic << endl;
+        cout << total_second_unic << endl;
+        cout << total_count<< endl;
+        cout << total_count+total_first_unic+total_second_unic<< endl;
         return true;
-    };
+    }
 
     map<string, vector<Package>>getFirstUnic(){
         return this->unic_first;
     }
 
     map<string, vector<Package>>getSecondUnic(){
+        return this->unic_second;
+    }
+    map<string, vector<Package>>getDiffUnic(){
         return this->unic_second;
     }
     int getTotalFirst(){

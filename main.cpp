@@ -1,46 +1,16 @@
 #define CURL_STATICLIB
 #include <iostream>
 #include <curl/curl.h>
-#include "rapidjson/document.h"
-#include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
+#include "algorithm"
 #include "Headers/Httprequest.h"
 #include "Headers/Package.h"
 #include "Headers/Comparator.h"
+#include "Headers/Converter.h"
+#include "Headers/Result.h"
 #include <vector>
-
-using namespace rapidjson;
 using namespace std;
-Package parseToPackage(const Value &_package)
-{
-    Package pack
-    {
-        _package["name"].GetString(),
-        _package["epoch"].GetInt(),
-        _package["version"].GetString(),
-        _package["release"].GetString(),
-        _package["arch"].GetString(),
-        _package["disttag"].GetString(),
-        _package["buildtime"].GetInt(),
-        _package["source"].GetString()
-    };
-    return pack;
-}
-vector<Package> getPackages(const string api_result)
-{
-    vector<Package> result;
-    Document doc;
-    doc.Parse(api_result.c_str());
-    Value &packages = doc["packages"];
-    for (SizeType i = 0; i < packages.Size(); i++)
-    {
-        const Value &package = packages[i];
-        Package pack = parseToPackage(package);
-        result.push_back(pack);
-    }
-    return result;
-}
 Document toJSON(int total_sisyph, int total_p10, int total_diff, map<string,vector<Package>>sisyph_arches, map<string,vector<Package>>p10_arches){
+    cout << total_diff;
     Document doc;
     Value json_val;
     auto &allocator = doc.GetAllocator();
@@ -93,19 +63,48 @@ Document toJSON(int total_sisyph, int total_p10, int total_diff, map<string,vect
 
 int main()
 {
-    vector<Package> sisyphus;
-    vector<Package> p10;
-    printf("Geting sisyphus packages..\n");
-    const auto sisyphus_result = Httprequest::httpGet("https://rdb.altlinux.org/api/export/branch_binary_packages/sisyphus");
-    sisyphus = getPackages(sisyphus_result);
-    printf("Total sisyphus: %u\n", sisyphus.size());
-    const auto p10_result = Httprequest::httpGet("https://rdb.altlinux.org/api/export/branch_binary_packages/p10");
-    printf("Geting p10 packages..\n");
-    p10 = getPackages(p10_result);
-    printf("Total p10: %u\n", p10.size());
-    Comparator comp(sisyphus, p10);
+    string first_request = "https://rdb.altlinux.org/api/export/branch_binary_packages/sisyphus";
+    auto name_first = first_request.substr(first_request.find_last_of('/')+1);
+    string second_request = "https://rdb.altlinux.org/api/export/branch_binary_packages/p10";
+    auto name_second = second_request.substr(second_request.find_last_of('/')+1);
+    Result result;
+    Converter converter;
+    vector<Package> first_pack;
+    vector<Package> second_pack;
+    cout << "Geting " << name_first << " packages.." << endl;
+    const auto first_result = Httprequest::httpGet("https://rdb.altlinux.org/api/export/branch_binary_packages/sisyphus");
+    first_pack = converter.getPackages(first_result);
+    cout << "Total sisyphus: " << first_pack.size() << endl;
+    const auto second_result = Httprequest::httpGet("https://rdb.altlinux.org/api/export/branch_binary_packages/p10");
+    cout << "Geting " << name_second <<  "packages.." << endl;
+    second_pack = converter.getPackages(second_result);
+    cout << "Total p10: " << second_pack.size() << endl;
+    Comparator comp(first_pack, second_pack);
     comp.compare();
-    toJSON(comp.getTotalFirst(),comp.getTotalSecond(),comp.getTotalDiff(),comp.getFirstUnic(),comp.getSecondUnic());
+    result.total_first_unic = comp.getTotalFirst();
+    result.total_second_unic = comp.getTotalSecond();
+    result.total_first_dominate = comp.getTotalDiff();
+    for(auto f_item : comp.getFirstUnic()){
+        for(auto s_item : comp.getSecondUnic()){
+            if(f_item.first == s_item.first){
+                Arch arch;
+                arch.name = f_item.first;
+                arch.first_count = f_item.second.size();
+                arch.second_count = s_item.second.size();
 
+                Unic unic_first;
+                unic_first.name = name_first;
+                unic_first.unic_packages = f_item.second;
+
+                Unic unic_second;
+                unic_second.name = name_second;
+                unic_second.unic_packages = s_item.second;
+
+                arch.first_unic_pac = unic_first;
+                arch.second_unic_pac = unic_second;
+                result.arches.push_back(arch);
+            }
+        }
+    }
     return 0;
 }

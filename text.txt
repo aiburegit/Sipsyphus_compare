@@ -1,0 +1,12 @@
+Geting sisyphus packages..
+Total sisyphus: 186550
+Geting p10 packages..
+Total p10: 181119
+aarch64
+armh
+i586
+noarch
+ppc64le
+x86_64
+x86_64-i586
+67504
