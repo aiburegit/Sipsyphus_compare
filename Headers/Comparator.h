@@ -70,7 +70,7 @@ public:
             {
                 if (f_enty.first == s_enty.first)
                 {
-                    cout << f_enty.first << endl;
+                    // cout << f_enty.first << endl;
                     unordered_set<Package, PackageHash> f_pac_set;
                     for (auto f_item : f_enty.second)
                     {
@@ -120,10 +120,10 @@ public:
                 }
             }
         }
-        cout << total_first_unic << endl;
-        cout << total_second_unic << endl;
-        cout << total_count<< endl;
-        cout << total_count+total_first_unic+total_second_unic<< endl;
+        // cout << total_first_unic << endl;
+        // cout << total_second_unic << endl;
+        // cout << total_count<< endl;
+        // cout << total_count+total_first_unic+total_second_unic<< endl;
         return true;
     }
 
@@ -135,7 +135,7 @@ public:
         return this->unic_second;
     }
     map<string, vector<Package>>getDiffUnic(){
-        return this->unic_second;
+        return this->unic_diff;
     }
     int getTotalFirst(){
         return this->total_first_unic;

@@ -12,22 +12,22 @@ using namespace std;
 
 int main()
 {
-    string first_request = "https://rdb.altlinux.org/api/export/branch_binary_packages/sisyphus";
+    const string first_request = "https://rdb.altlinux.org/api/export/branch_binary_packages/sisyphus";
     auto name_first = first_request.substr(first_request.find_last_of('/')+1);
-    string second_request = "https://rdb.altlinux.org/api/export/branch_binary_packages/p10";
+    const string second_request = "https://rdb.altlinux.org/api/export/branch_binary_packages/p10";
     auto name_second = second_request.substr(second_request.find_last_of('/')+1);
     Result result;
     Converter converter;
     vector<Package> first_pack;
     vector<Package> second_pack;
-    cout << "Geting " << name_first << " packages.." << endl;
-    const auto first_result = Httprequest::httpGet("https://rdb.altlinux.org/api/export/branch_binary_packages/sisyphus");
+    // cout << "Geting " << name_first << " packages.." << endl;
+    const auto first_result = Httprequest::httpGet(first_request.c_str());
     first_pack = converter.getPackages(first_result);
-    cout << "Total sisyphus: " << first_pack.size() << endl;
-    const auto second_result = Httprequest::httpGet("https://rdb.altlinux.org/api/export/branch_binary_packages/p10");
-    cout << "Geting " << name_second <<  "packages.." << endl;
+    // cout << "Total sisyphus: " << first_pack.size() << endl;
+    const auto second_result = Httprequest::httpGet(second_request.c_str());
+    // cout << "Geting " << name_second <<  "packages.." << endl;
     second_pack = converter.getPackages(second_result);
-    cout << "Total p10: " << second_pack.size() << endl;
+    // cout << "Total p10: " << second_pack.size() << endl;
     Comparator comp(first_pack, second_pack);
     comp.compare();
     result.total_first_unic = comp.getTotalFirst();
@@ -66,5 +66,6 @@ int main()
         }
     }
     auto js = converter.toJSON(result);
+    cout << js;
     return 0;
 }

@@ -18,7 +18,7 @@ public:
     ~Converter();
     Package parseToPackage(const Value &_package);
     vector<Package> getPackages(const string api_result);
-    Document toJSON(Result result);
+    string toJSON(Result result);
 };
 
 Converter::Converter(/* args */)
@@ -59,30 +59,29 @@ Value Converter::getJsonPackage(Package &package, MemoryPoolAllocator<> &allocat
 {
     Value result;
     result.SetObject();
-    Value buff_value;
-    buff_value.SetString(package.name.data(),package.name.size());
-    result.AddMember("name", buff_value, allocator);
-    buff_value.SetInt(package.epoch);
-    result.AddMember("epoch", buff_value, allocator);
-    buff_value.SetString(package.version.data(),package.version.size());
-    result.AddMember("version", buff_value, allocator);
-    buff_value.SetString(package.release.data(),package.release.size());
-    result.AddMember("release", buff_value, allocator);
-    buff_value.SetString(package.arch.data(),package.arch.size());
-    result.AddMember("arch", buff_value, allocator);
-    buff_value.SetString(package.disttag.data(),package.disttag.size());
-    result.AddMember("disttag", buff_value, allocator);
-    buff_value.SetInt(package.buildtime);
-    result.AddMember("buildtime", buff_value, allocator);
-    buff_value.SetString(package.source.data(),package.source.size());
-    result.AddMember("source", buff_value, allocator);
+    Value name(package.name.c_str(),allocator);
+    result.AddMember("name", name, allocator);
+    Value epoc(package.epoch);
+    result.AddMember("epoch", epoc, allocator);
+    Value version(package.version.c_str(),allocator);
+    result.AddMember("version", version, allocator);
+    Value release(package.release.c_str(),allocator);
+    result.AddMember("release", release, allocator);
+    Value arch(package.arch.c_str(),allocator);
+    result.AddMember("arch", arch, allocator);
+    Value disttag(package.disttag.c_str(),allocator);
+    result.AddMember("disttag", disttag, allocator);
+    Value buildtime(package.buildtime);
+    result.AddMember("buildtime", buildtime, allocator);
+    Value source(package.source.c_str(),allocator);
+    result.AddMember("source", source, allocator);
     return result;
 }
 Value Converter::getJsonArray(vector<Package> &packages, MemoryPoolAllocator<> &allocator)
 {
     Value result;
     result.SetArray();
-    for (auto p : packages)
+    for (auto &p : packages)
     {
         result.PushBack(getJsonPackage(p,allocator),allocator);
     }
@@ -92,22 +91,20 @@ Value Converter::getUnic(Unic &unic_pack, MemoryPoolAllocator<> &allocator)
 {
     Value result;
     Value packages;
-    Value buff_value;
     result.SetObject();
-    string name = unic_pack.name;
-    buff_value.SetString(name.data(),name.size());
-    result.AddMember("name",buff_value,allocator);
-    buff_value.SetInt(unic_pack.count);
-    result.AddMember("count",buff_value,allocator);
+    Value name(unic_pack.name.c_str(),allocator);
+    result.AddMember("name",name,allocator);
+    Value unic_count(unic_pack.count);
+    result.AddMember("count",unic_count,allocator);
     packages.SetArray();
-    for (auto p : unic_pack.unic_packages)
+    for (auto &p : unic_pack.unic_packages)
     {
         packages.PushBack(getJsonPackage(p,allocator),allocator);
     }
     result.AddMember("packages",packages,allocator);
     return result;
 }
-Document Converter::toJSON(Result result)
+string Converter::toJSON(Result result)
 {
     Document doc;
     Value json_val;
@@ -130,20 +127,21 @@ Document Converter::toJSON(Result result)
         Value json_unic_second;
         Value json_unic_dominate;
         
-        buff_value.SetString(arch.name.data(),arch.name.size());
-        json_arch.AddMember("name",buff_value,allocator);
-        buff_value.SetInt(arch.first_count);
-        string name_first = arch.first_unic_pac.name + "_count";
-        name_buff_value.SetString(name_first.data(),name_first.size());
-        json_arch.AddMember(name_buff_value,buff_value,allocator);
+        Value arch_name(arch.name.c_str(),allocator);
+        json_arch.AddMember("name",arch_name,allocator);
 
-        string name_second = arch.second_unic_pac.name + "_count";
-        buff_value.SetInt(arch.second_count);
-        name_buff_value.SetString(name_second.data(),name_second.size());
-        json_arch.AddMember(name_buff_value,buff_value,allocator);
+        Value name_first(arch.first_unic_pac.name.c_str(),allocator);
+        Value first_count(arch.first_count);
+        json_arch.AddMember(name_first,first_count,allocator);
 
-        buff_value.SetInt(arch.first_dominate_count);
-        json_arch.AddMember("first_dominate",buff_value,allocator);
+        
+       
+        Value name_second (arch.second_unic_pac.name.c_str(),allocator);
+        Value second_count(arch.second_count);
+        json_arch.AddMember(name_second,second_count,allocator);
+
+        Value first_dom_count(arch.first_dominate_count);
+        json_arch.AddMember("first_dominate",first_dom_count,allocator);
 
         json_unic_first = getUnic(arch.first_unic_pac,allocator);
         json_arch.AddMember("first_packages", json_unic_first, allocator);
@@ -160,7 +158,5 @@ Document Converter::toJSON(Result result)
     StringBuffer strbuf;
     Writer<StringBuffer> writer(strbuf);
     doc.Accept(writer);
-    cout << strbuf.GetString();
-
-    return doc;
+    return strbuf.GetString();
 }
