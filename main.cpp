@@ -10,11 +10,15 @@
 #include <vector>
 using namespace std;
 
-int main()
+int main(int argc, char *argv[])
 {
-    const string first_request = "https://rdb.altlinux.org/api/export/branch_binary_packages/sisyphus";
+    if(argc < 3){
+        cout << "Enter a url APIs\n";
+        return -1;
+    }
+    string first_request = argv[1];
     auto name_first = first_request.substr(first_request.find_last_of('/')+1);
-    const string second_request = "https://rdb.altlinux.org/api/export/branch_binary_packages/p10";
+    string second_request = argv[2];
     auto name_second = second_request.substr(second_request.find_last_of('/')+1);
     Result result;
     Converter converter;
@@ -25,9 +29,22 @@ int main()
     first_pack = converter.getPackages(first_result);
     // cout << "Total sisyphus: " << first_pack.size() << endl;
     const auto second_result = Httprequest::httpGet(second_request.c_str());
+
+    if(first_result.size() == 0 || first_pack.size() == 0){
+        cout << "First url error\n";
+        cout << first_result +'\n';
+        return -1;
+    }
+    if(second_result.size() == 0 || second_pack.size() == 0){
+        cout << "Second url error\n";
+        cout << second_result + '\n';
+        return -1;
+    }
     // cout << "Geting " << name_second <<  "packages.." << endl;
     second_pack = converter.getPackages(second_result);
     // cout << "Total p10: " << second_pack.size() << endl;
+    
+
     Comparator comp(first_pack, second_pack);
     comp.compare();
     result.total_first_unic = comp.getTotalFirst();

@@ -43,6 +43,25 @@ Package Converter::parseToPackage(const Value &_package)
 }
 vector<Package> Converter::getPackages(const string api_result)
 {
+    try
+    {
+    vector<Package> result;
+    Document doc;
+    doc.Parse(api_result.c_str());
+    Value &packages = doc["packages"];
+    for (SizeType i = 0; i < packages.Size(); i++)
+    {
+        const Value &package = packages[i];
+        Package pack = parseToPackage(package);
+        result.push_back(pack);
+    }
+    return result;
+    }
+    catch(...)
+    {
+       return vector<Package>();
+    }
+    
     vector<Package> result;
     Document doc;
     doc.Parse(api_result.c_str());
@@ -111,14 +130,19 @@ string Converter::toJSON(Result result)
     auto &allocator = doc.GetAllocator();
     doc.SetObject();
     json_val.SetInt(result.total_first_unic);
-    doc.AddMember("total_sisyphus_unic", json_val, allocator);
+    Value first_name(result.arches[0].first_unic_pac.name.c_str(),allocator);
+    doc.AddMember(first_name, json_val, allocator);
     json_val.SetInt(result.total_second_unic);
-    doc.AddMember("total_p10_unic", json_val, allocator);
+    Value second_name(result.arches[0].second_unic_pac.name.c_str(),allocator);
+    doc.AddMember(second_name, json_val, allocator);
     json_val.SetInt(result.total_first_dominate);
-    doc.AddMember("sisyphus_ver_dominate", json_val, allocator);
+    Value dominate_name(result.arches[0].dominate_unic_pac.name.c_str(),allocator);
+    doc.AddMember(dominate_name, json_val, allocator);
     json_val.SetArray();
-    for (auto arch : result.arches)
+    for (auto &arch : result.arches)
     {
+        string first_rep_name = arch.first_unic_pac.name;
+        string second_rep_name = arch.second_unic_pac.name;
         Value buff_value;
         Value name_buff_value;
         Value json_arch;
@@ -130,27 +154,31 @@ string Converter::toJSON(Result result)
         Value arch_name(arch.name.c_str(),allocator);
         json_arch.AddMember("name",arch_name,allocator);
 
-        Value name_first(arch.first_unic_pac.name.c_str(),allocator);
+        Value name_first(first_rep_name.c_str(),allocator);
         Value first_count(arch.first_count);
         json_arch.AddMember(name_first,first_count,allocator);
 
         
        
-        Value name_second (arch.second_unic_pac.name.c_str(),allocator);
+        Value name_second (second_rep_name.c_str(),allocator);
         Value second_count(arch.second_count);
         json_arch.AddMember(name_second,second_count,allocator);
 
         Value first_dom_count(arch.first_dominate_count);
-        json_arch.AddMember("first_dominate",first_dom_count,allocator);
+        Value name_dom (string(first_rep_name+"_dominate").c_str(),allocator);
+        json_arch.AddMember(name_dom,first_dom_count,allocator);
 
         json_unic_first = getUnic(arch.first_unic_pac,allocator);
-        json_arch.AddMember("first_packages", json_unic_first, allocator);
+        Value unic_first_name(string(first_rep_name+"_packages").c_str(),allocator);
+        json_arch.AddMember(unic_first_name, json_unic_first, allocator);
 
         json_unic_second = getUnic(arch.second_unic_pac,allocator);
-        json_arch.AddMember("second_packages", json_unic_second, allocator);
+        Value unic_second_name(string(second_rep_name+"_packages").c_str(),allocator);
+        json_arch.AddMember(unic_second_name, json_unic_second, allocator);
 
         json_unic_dominate = getUnic(arch.dominate_unic_pac,allocator);
-        json_arch.AddMember("first_dominate_packages", json_unic_dominate, allocator);
+        Value unic_dom_name(string(first_rep_name+"_dom_packages").c_str(),allocator);
+        json_arch.AddMember(unic_dom_name, json_unic_dominate, allocator);
 
         json_val.PushBack(json_arch, allocator);
     }
