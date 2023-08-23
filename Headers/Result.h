@@ -1,6 +1,7 @@
+#pragma once
 #include "Package.h"
 #include <vector>
-
+#include <iostream>
 struct Unic
 {
     string name;
@@ -9,12 +10,13 @@ struct Unic
 };
 struct Arch
 {
+    string name;
     int first_count;
     int second_count;
     int first_dominate_count;
-    string name;
     Unic first_unic_pac;
     Unic second_unic_pac;
+    Unic dominate_unic_pac;
 };
 struct Result
 {
