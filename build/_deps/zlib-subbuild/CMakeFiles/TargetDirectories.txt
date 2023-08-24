@@ -1,3 +1,0 @@
-/home/aibure/CppProjects/Sisyphus_compare/build/_deps/zlib-subbuild/CMakeFiles/zlib-populate.dir
-/home/aibure/CppProjects/Sisyphus_compare/build/_deps/zlib-subbuild/CMakeFiles/edit_cache.dir
-/home/aibure/CppProjects/Sisyphus_compare/build/_deps/zlib-subbuild/CMakeFiles/rebuild_cache.dir

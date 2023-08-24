@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/aibure/CppProjects/Sisyphus_compare/build",
-  "command": "/usr/bin/g++   -g -o CMakeFiles/visualization.dir/main.cpp.o -c /home/aibure/CppProjects/Sisyphus_compare/main.cpp",
-  "file": "/home/aibure/CppProjects/Sisyphus_compare/main.cpp"
-}
-]
