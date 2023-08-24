@@ -13,7 +13,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     if(argc < 3){
-        cout << "Enter a url APIs\n";
+        cout << "Enter a API URLs\n";
         return -1;
     }
     string first_request = argv[1];
@@ -29,19 +29,20 @@ int main(int argc, char *argv[])
     first_pack = converter.getPackages(first_result);
     // cout << "Total sisyphus: " << first_pack.size() << endl;
     const auto second_result = Httprequest::httpGet(second_request.c_str());
+    second_pack = converter.getPackages(second_result);
 
-    if(first_result.size() == 0 || first_pack.size() == 0){
+    if(first_pack.size() == 0){
         cout << "First url error\n";
         cout << first_result +'\n';
         return -1;
     }
-    if(second_result.size() == 0 || second_pack.size() == 0){
+    if(second_pack.size() == 0){
         cout << "Second url error\n";
         cout << second_result + '\n';
         return -1;
     }
     // cout << "Geting " << name_second <<  "packages.." << endl;
-    second_pack = converter.getPackages(second_result);
+    
     // cout << "Total p10: " << second_pack.size() << endl;
     
 
