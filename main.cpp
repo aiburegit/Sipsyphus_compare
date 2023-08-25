@@ -12,6 +12,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+    
     if(argc < 3){
         cout << "Enter a API URLs\n";
         return -1;

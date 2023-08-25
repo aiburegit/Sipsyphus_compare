@@ -1,5 +1,0 @@
-cmake_minimum_required(VERSION 3.4)
-project(visualization)
-find_package(cpr REQUIRED)
-add_executable(visualization main.cpp)
-target_link_libraries(visualization PRIVATE cpr::cpr)
