@@ -24,7 +24,7 @@ This project aims to compare two RPM repositories and analyze the differences be
 3. Build the project:
    
    cd project
-   make -f MakeFile
+   sudo make -f MakeFile
    
 
 ## Usage
