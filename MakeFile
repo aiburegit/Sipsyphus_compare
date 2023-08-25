@@ -2,10 +2,10 @@ PREFIX=/usr
 CXX=g++-10
 CXXFLAGS=
 
-all: main
+all: repcmp
 
-main: main.cpp -lrepcomp
-	$(CXX) $(CXXFLAGS) main.cpp -o main -lrepcomp -lcurl -lrpm
+repcmp: main.cpp -lrepcomp
+	$(CXX) $(CXXFLAGS) main.cpp -o repcmp -lrepcomp -lcurl -lrpm
 
 -lrepcomp: comparator.o converter.o httprequest.o
 	mkdir -p $(PREFIX)/lib
@@ -22,4 +22,4 @@ httprequest.o: Headers/Httprequest.h Sourse/Httprequest.cpp
 
 install: all
 	mkdir -p $(PREFIX)/bin
-	install main $(PREFIX)/bin/
+	install repcmp $(PREFIX)/bin/
