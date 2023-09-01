@@ -12,15 +12,30 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    
+    string def_url = "https://rdb.altlinux.org/api/export/branch_binary_packages/";
+    string first_request;
+    string second_request;
+    string name_first;
+    string name_second;
     if(argc < 3){
         cout << "Enter a API URLs\n";
         return -1;
     }
-    string first_request = argv[1];
-    auto name_first = first_request.substr(first_request.find_last_of('/')+1);
-    string second_request = argv[2];
-    auto name_second = second_request.substr(second_request.find_last_of('/')+1);
+    if(argc == 4){
+        if(strcmp(argv[1],"-u") == 0){
+            first_request =  argv[2];
+            second_request = argv[3];
+            name_first = first_request.substr(first_request.find_last_of('/')+1);
+            name_second = second_request.substr(second_request.find_last_of('/')+1);
+        }
+    }
+    if(argc == 3){
+        first_request = def_url + argv[1];
+        second_request = def_url + argv[2];
+        name_first = argv[1];
+        name_second = argv[2];
+    }
+   
     Result result;
     Converter converter;
     vector<Package> first_pack;
@@ -28,15 +43,14 @@ int main(int argc, char *argv[])
     // cout << "Geting " << name_first << " packages.." << endl;
     const auto first_result = Httprequest::httpGet(first_request.c_str());
     first_pack = converter.getPackages(first_result);
-    // cout << "Total sisyphus: " << first_pack.size() << endl;
-    const auto second_result = Httprequest::httpGet(second_request.c_str());
-    second_pack = converter.getPackages(second_result);
-
     if(first_pack.size() == 0){
         cout << "First url error\n";
         cout << first_result +'\n';
         return -1;
     }
+    // cout << "Total sisyphus: " << first_pack.size() << endl;
+    const auto second_result = Httprequest::httpGet(second_request.c_str());
+    second_pack = converter.getPackages(second_result);
     if(second_pack.size() == 0){
         cout << "Second url error\n";
         cout << second_result + '\n';
@@ -85,6 +99,6 @@ int main(int argc, char *argv[])
         }
     }
     auto js = converter.toJSON(result);
-    cout << js;
+    // cout << js;
     return 0;
 }

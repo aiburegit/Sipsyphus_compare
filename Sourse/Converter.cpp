@@ -20,6 +20,10 @@ vector<Package> Converter::getPackages(const string api_result)
         vector<Package> result;
         Document doc;
         doc.Parse(api_result.c_str());
+        if(doc.HasParseError()){
+            cout << "Uncorrect request\n";
+            return vector<Package>();
+        }
         if(doc.FindMember("packages") == doc.MemberEnd()){
             return vector<Package>();
         }
@@ -32,7 +36,7 @@ vector<Package> Converter::getPackages(const string api_result)
         }
         return result;
     }
-    catch (...)
+    catch (const std::exception& e)
     {
          return vector<Package>();
     }

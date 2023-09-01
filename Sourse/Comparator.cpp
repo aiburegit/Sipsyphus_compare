@@ -101,10 +101,11 @@ bool Comparator::compare()
             }
         }
     }
-    // cout << total_first_unic << endl;
-    // cout << total_second_unic << endl;
+    cout << total_first_unic << endl;
+    cout << total_second_unic << endl;
     // cout << total_count<< endl;
     // cout << total_count+total_first_unic+total_second_unic<< endl;
+    cout << total_count;
     return true;
 }
 map<string, vector<Package>> Comparator::getFirstUnic()
