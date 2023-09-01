@@ -99,6 +99,6 @@ int main(int argc, char *argv[])
         }
     }
     auto js = converter.toJSON(result);
-    // cout << js;
+    cout << js;
     return 0;
 }
