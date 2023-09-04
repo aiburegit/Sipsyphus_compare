@@ -17,14 +17,15 @@ This project aims to compare two RPM repositories and analyze the differences be
    
 2. Install the required dependencies:
    
-   sudo apt-get install libcurl4-openssl-dev
-   sudo apt-get install librpm-dev
-   sudo apt-get install rapidjson-dev
+   sudo apt-get install libcurl-devel
+   sudo apt-get install librpm-devel
+   sudo apt-get install rapidjson
    
 3. Build the project:
-   
+   !default path(PREFIX) is /usr/local using sudo
    cd project
-   sudo make -f MakeFile
+   make PREFIX=(path) install
+   #Install to the folder where the project itself is located - make PREFIX=. install
    
 
 ## Usage
