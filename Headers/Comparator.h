@@ -2,7 +2,6 @@
 #include <iostream>
 #include <vector>
 #include "Package.h"
-#pragma once
 #include <map>
 #include <unordered_set>
 #include <algorithm>
@@ -22,6 +21,9 @@ private:
     vector<Package> version_diff;
     int total_first_unic = 0, total_second_unic = 0, total_ver_diff = 0;
     map<string, vector<Package>> sortByArchVersions(vector<Package> pack);
+    int getTotalSum(map<string, vector<Package>> unic_container);
+    void packagesGetUnic(pair<const string,vector<Package>> f_enty, pair<const string,vector<Package>> s_enty, map<string, vector<Package>> *unic_container);
+    void packagesGetDiff(pair<const string,vector<Package>> f_enty, pair<const string,vector<Package>> s_enty, map<string, vector<Package>> *diff_container);
     bool versionCompare(Package f_item, Package s_item);  //returns True if the version of the first package is greater than the second
     bool test_method(Package pac);
 
