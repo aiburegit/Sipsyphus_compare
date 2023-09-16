@@ -35,6 +35,9 @@ This project aims to compare two RPM repositories and analyze the differences be
    
 2. Replace <repository1_url> and <repository2_url> with the URLs of the RPM repositories you want to compare.
 3. The program will fetch metadata from both repositories, compare the packages, and provide a detailed analysis of the differences found.
+4. You can use the "-u" switch to specify the full address
+
+
 
 ## Dependencies
 - curllib: A library for making HTTP requests and handling responses.
