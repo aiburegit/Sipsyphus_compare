@@ -1,4 +1,5 @@
 #include "../Headers/Comparator.h"
+#include <fstream>
 
 Comparator::Comparator(Package _first_enty, Package _second_enty)
 {
@@ -23,66 +24,45 @@ map<string, vector<Package>> Comparator::sortByArchVersions(vector<Package> pack
 };
 bool Comparator::versionCompare(Package f_item, Package s_item)
 {
-        int res = rpmvercmp(f_item.version.c_str(), s_item.version.c_str());
-        if (res > 0)
-        {
-            return true;
-        }
+    //lead to version-release
+    string f_ver_rel = f_item.version+"-"+f_item.release;
+    string s_ver_rel = s_item.version+"-"+s_item.release;
+    int res_ver = rpmvercmp(f_ver_rel.c_str(), s_ver_rel.c_str());
+    if (res_ver > 0)
+    {
+        return true;
+    }
     return false;
 }
-int Comparator::getTotalSum(map<string, vector<Package>> unic_container){
+int Comparator::getTotalSum(map<string, vector<Package>> unic_container)
+{
     int result = 0;
-    for(auto p : unic_container){
-        result+=p.second.size();
+    for (auto p : unic_container)
+    {
+        result += p.second.size();
     }
     return result;
 }
- void Comparator::packagesGetDiff(pair<const string,vector<Package>> f_enty, pair<const string,vector<Package>> s_enty, map<string, vector<Package>> *diff_container)
- {
-
-    
-    vector<Package> f_packages;
-    vector<Package> s_packages;
+void Comparator::packagesGetDiff(pair<const string, vector<Package>> f_enty, pair<const string, vector<Package>> s_enty, map<string, vector<Package>> *diff_container)
+{
     unordered_set<Package, PackageHash> f_pac_set;
     for (auto f_item : f_enty.second)
     {
         f_pac_set.insert(f_item);
     }
-    unordered_set<Package, PackageHash> s_pac_set;
     for (auto s_item : s_enty.second)
     {
-        s_pac_set.insert(s_item);
-    }
-
-    for(auto f_item : f_enty.second)
-    {
-        auto iter = s_pac_set.find(f_item);
-        if(iter != s_pac_set.end()){
-            if(versionCompare(f_item,(*iter))){
-                auto f = f_item;
-                auto s = (*iter);
-                (*diff_container)[f_enty.first].push_back(f_item);
-            }
-            f_packages.push_back(f_item);
-           
-        }
-    }
-    for(auto s_item : s_enty.second)
-    {
         auto iter = f_pac_set.find(s_item);
-        if(iter != f_pac_set.end()){
-            if(versionCompare((*iter), s_item)){
-                auto f = (*iter);
-                auto s = s_item;
+        if (iter != f_pac_set.end())
+        {
+            if (versionCompare((*iter), s_item))
+            {
                 (*diff_container)[f_enty.first].push_back((*iter));
             }
-            s_packages.push_back(s_item);
-           
         }
     }
-  
- }
-void Comparator::packagesGetUnic(pair<const string,vector<Package>> f_enty, pair<const string,vector<Package>> s_enty, map<string, vector<Package>> *unic_container)
+}
+void Comparator::packagesGetUnic(pair<const string, vector<Package>> f_enty, pair<const string, vector<Package>> s_enty, map<string, vector<Package>> *unic_container)
 {
     unordered_set<Package, PackageHash> s_pac_set;
     for (auto s_item : s_enty.second)
@@ -113,9 +93,9 @@ bool Comparator::compare()
         {
             if (f_enty.first == s_enty.first)
             {
-               packagesGetUnic(f_enty,s_enty,&unic_first);
-               packagesGetUnic(s_enty,f_enty,&unic_second);
-               packagesGetDiff(f_enty,s_enty,&unic_diff);
+                packagesGetUnic(f_enty, s_enty, &unic_first);
+                packagesGetUnic(s_enty, f_enty, &unic_second);
+                packagesGetDiff(f_enty, s_enty, &unic_diff);
             }
         }
     }
