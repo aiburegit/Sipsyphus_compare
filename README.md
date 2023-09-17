@@ -23,10 +23,13 @@ This project aims to compare two RPM repositories and analyze the differences be
    
 3. Build the project:
    !default path(PREFIX) is /usr/local using sudo
-   cd project
-   make PREFIX=(path) install
+   1. cd project
+   2. make PREFIX=(path) install
+   3. LD_LIBRARY_PATH=(path)/lib
+   you will also have to specify the path for LD with the following command: LD_LIBRARY_PATH=(path)/lib - it is a location a shared lib
+
    #Install to the folder where the project itself is located - make PREFIX=. install
-   
+   #LD_LIBRARY_PATH=./lib
 
 ## Usage
 1. Run the executable with the following command:
