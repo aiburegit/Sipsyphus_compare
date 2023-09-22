@@ -35,11 +35,13 @@ This project aims to compare two RPM repositories and analyze the differences be
 1. Run the executable with the following command:
    
    ./repcmp <repository1_url> <repository2_url>
+   ./repcmp sisyphus p10
    
 2. Replace <repository1_url> and <repository2_url> with the URLs of the RPM repositories you want to compare.
 3. The program will fetch metadata from both repositories, compare the packages, and provide a detailed analysis of the differences found.
 4. You can use the "-u" switch to specify the full address
 
+   ./repcmp -u https://rdb.altlinux.org/api/export/branch_binary_packages/sisyphus https://rdb.altlinux.org/api/export/branch_binary_packages/p10
 
 
 ## Dependencies
